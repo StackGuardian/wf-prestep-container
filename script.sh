@@ -22,3 +22,13 @@ if [ -n "$SG_BASE64_IAC_INPUT_VARIABLES" ]; then
 else
   echo "SG_BASE64_IAC_INPUT_VARIABLES is not set."
 fi
+
+directory=$MOUNTED_IAC_SOURCE_CODE_DIR
+
+# Überprüfen, ob das Verzeichnis existiert
+if [ -d "$directory" ]; then
+    echo "Inhalt des Verzeichnisses $directory:"
+    ls -la "$directory"
+else
+    echo "Das Verzeichnis $directory existiert nicht."
+fi
