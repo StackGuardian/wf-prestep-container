@@ -8,9 +8,9 @@ filepath="${MOUNTED_IAC_SOURCE_CODE_DIR}/$filename"
 
 #printf "%s" "$filecontent" > "$filepath" 2>/dev/null;
 
-echo "Filecontent \n######################\n"
-echo $filecontent
-echo "\n\nFilename \n######################\n"
-echo $filename
-echo "\n\nFilepath \n######################\n"
-echo $filepath
+printf 'Filecontent \n######################\n'
+printf $filecontent
+printf "\n\nFilename \n######################\n"
+printf $filename
+printf "\n\nFilepath \n######################\n"
+printf $filepath
