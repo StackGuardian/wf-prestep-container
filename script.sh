@@ -10,7 +10,7 @@ filepath="${MOUNTED_IAC_SOURCE_CODE_DIR}"/$(printf "%s" $filename | tr -d '"' $f
 #printf "%s" "$filecontent" > "$filepath" 2>/dev/null;
 
 printf '\n\nFilecontent \n######################\n'
-printf $filecontent
+printf "%b" $filecontent
 printf '\n\nFilename \n######################\n'
 printf $filename
 printf '\n\nFilepath \n######################\n'
