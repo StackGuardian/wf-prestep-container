@@ -9,6 +9,6 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
-COPY writefile.sh /app/start.sh
+COPY rename.sh /app/start.sh
 RUN chmod +x /app/start.sh
 CMD [ "/app/start.sh" ]
