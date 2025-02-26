@@ -17,4 +17,6 @@ terraform {
 }
 EOF
 
-printf "%b" "$backendcontent" > "$filepath_backend" 2>/dev/null;
+printf "%b" "$backendcontent" > "$filepath_backend" 2>/dev/null
+
+cat $filepath_backend
