@@ -7,12 +7,16 @@ statefilename=$(echo $SG_BASE64_WORKFLOW_STEP_INPUT_VARIABLES | base64 --decode 
 filepath_backend=${MOUNTED_IAC_SOURCE_CODE_DIR}"/backend.tf"
 
 read -r -d '' backendcontent << EOF
-terraform {
-  backend "azurerm" {
-    resource_group_name  = $resource_group_name
-    storage_account_name = $storage_account_name
-    container_name       = $container_name
-    key                  = $statefilename
+{
+"terraform": {
+    "backend": {
+      "azurerm": {
+          "resource_group_name": "$resource_group_name",
+          "storage_account_name": "$storage_account_name",
+          "container_name": "$container_name",
+          "key": "$statefilename"
+          }
+      }
   }
 }
 EOF
