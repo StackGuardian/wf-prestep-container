@@ -1,5 +1,5 @@
 # Basis-Image
-FROM debian:latest
+FROM debian:12-slim
 
 # Aktualisierung der Paketliste und Installation von notwendigen Tools
 RUN apt-get update && \
