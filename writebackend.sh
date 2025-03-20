@@ -4,7 +4,7 @@ resource_group_name=$(echo $SG_BASE64_WORKFLOW_STEP_INPUT_VARIABLES | base64 --d
 storage_account_name=$(echo $SG_BASE64_WORKFLOW_STEP_INPUT_VARIABLES | base64 --decode | jq -r '.storage_account_name')
 container_name=$(echo $SG_BASE64_WORKFLOW_STEP_INPUT_VARIABLES | base64 --decode | jq -r '.container_name')
 statefilename=$(echo $SG_BASE64_WORKFLOW_STEP_INPUT_VARIABLES | base64 --decode | jq -r '.statefilename')
-filepath_backend=${MOUNTED_IAC_SOURCE_CODE_DIR}"/backend.tf.json"
+filepath_backend=${MOUNTED_IAC_SOURCE_CODE_DIR}"/backend.tf.json
 
 read -r -d '' backendcontent << EOF
 {
