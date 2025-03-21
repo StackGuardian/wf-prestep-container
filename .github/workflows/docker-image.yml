@@ -16,3 +16,8 @@ jobs:
     - uses: actions/checkout@v4
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag mmalzahn/testbuildimage:$(date +%s)
+    - name: docker hub login
+      run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login ghcr.io -u mmalzahn --password-stdin
+    - name: Push the Docker image
+      run: docker push mmalzahn/testbuildimage:$(date +%s)
+      
