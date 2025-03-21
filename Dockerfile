@@ -9,6 +9,6 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
-COPY writebackend.sh /app/start.sh
-RUN chmod +x /app/start.sh
-CMD [ "/app/start.sh" ]
+COPY scripts/*.sh /app
+RUN chmod +x /app/*.sh
+CMD [ "/app/sleep.sh" ]
