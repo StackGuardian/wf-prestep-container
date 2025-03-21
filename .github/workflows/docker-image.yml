@@ -18,7 +18,7 @@ jobs:
       run: docker build . --file Dockerfile --tag mmalzahn/testbuildimage:$(date +%s)
 
     - name: docker hub login
-      run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login ghcr.io -u mmalzahn --password-stdin
+      run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u mmalzahn --password-stdin
       
     - name: Push the Docker image
       run: docker push mmalzahn/testbuildimage:$(date +%s)
