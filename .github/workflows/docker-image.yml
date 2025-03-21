@@ -8,17 +8,35 @@ on:
 
 jobs:
 
-  build:
+  build_x86:
 
     runs-on: ubuntu-latest
 
     steps:
+    - name: Checkout the repository
+      uses: actions/checkout@v4
+
+    - name: docker hub login
+      run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u mmalzahn --password-stdin
+      
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag mmalzahn/testbuildimage:${{ github.ref_name }}-x86
+
+    - name: Push the Docker image
+      run: docker push mmalzahn/testbuildimage:${{ github.ref_name }}-x86
+
+
+  build_arm:
+
+    runs-on: ubuntu-22.04-arm
+
+    steps:
     - uses: actions/checkout@v4
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag mmalzahn/testbuildimage:$(date +%s)
+      run: docker build . --file Dockerfile --tag mmalzahn/testbuildimage:${{ github.ref_name }}-arm
 
     - name: docker hub login
       run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u mmalzahn --password-stdin
       
     - name: Push the Docker image
-      run: docker push mmalzahn/testbuildimage:$(date +%s)
+      run: docker push mmalzahn/testbuildimage:${{ github.ref_name }}-arm
