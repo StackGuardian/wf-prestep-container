@@ -20,6 +20,7 @@ jobs:
   build_x86:
 
     runs-on: ubuntu-latest
+
     steps:
     - name: Checkout the repository
       uses: actions/checkout@v4
@@ -37,6 +38,7 @@ jobs:
   build_arm:
 
     runs-on: ubuntu-22.04-arm
+
     steps:
     - uses: actions/checkout@v4
     - name: Build the Docker image
@@ -56,11 +58,14 @@ jobs:
       image: mmalzahn/testbuildimage:${{ github.ref_name }}-x86
       env:
         SG_BASE64_WORKFLOW_STEP_INPUT_VARIABLES: eyJwcm92aWRlcnRmIjogIkhhbnMgMTIzNCIsICJmaWxlY29udGVudCI6ICJwcm92aWRlciBcImF6dXJlcm1cIiB7XG4gIHJlc291cmNlX3Byb3ZpZGVyX3JlZ2lzdHJhdGlvbnMgPSBcIm5vbmVcIiBcbiAgZmVhdHVyZXMge31cbn1cbiIsICJmaWxlbmFtZSI6ICJwcm92aWRlci50ZiJ9  
+
     steps:
     - name: check shell scripts
       run: (ls -l /app/*.sh && echo "Shell scripts found") || echo "No shell scripts found"
+
     - name: check environment variables
       run: echo $SG_BASE64_WORKFLOW_STEP_INPUT_VARIABLES | base64 -d | jq .
+
     - name: check json content
       run: tftest=$(echo $SG_BASE64_WORKFLOW_STEP_INPUT_VARIABLES | base64 --decode | jq -r '.providertf') && echo $tftest
 
@@ -72,10 +77,13 @@ jobs:
       image: mmalzahn/testbuildimage:${{ github.ref_name }}-arm
       env:
         SG_BASE64_WORKFLOW_STEP_INPUT_VARIABLES: eyJwcm92aWRlcnRmIjogIkhhbnMgMTIzNCIsICJmaWxlY29udGVudCI6ICJwcm92aWRlciBcImF6dXJlcm1cIiB7XG4gIHJlc291cmNlX3Byb3ZpZGVyX3JlZ2lzdHJhdGlvbnMgPSBcIm5vbmVcIiBcbiAgZmVhdHVyZXMge31cbn1cbiIsICJmaWxlbmFtZSI6ICJwcm92aWRlci50ZiJ9  
+
     steps:
     - name: check shell scripts
       run: (ls -l /app/*.sh && echo "Shell scripts found") || echo "No shell scripts found"
+
     - name: check environment variables
       run: echo $SG_BASE64_WORKFLOW_STEP_INPUT_VARIABLES | base64 -d | jq .
+
     - name: check json content
       run: tftest=$(echo $SG_BASE64_WORKFLOW_STEP_INPUT_VARIABLES | base64 --decode | jq -r '.providertf') && echo $tftest
