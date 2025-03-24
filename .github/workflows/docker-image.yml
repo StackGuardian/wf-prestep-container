@@ -49,7 +49,7 @@ jobs:
       run: docker push mmalzahn/testbuildimage:${{ github.ref_name }}-arm
 
   test_image:
-    needs: [ build_x86 ]
+    needs: [ build_x86, build_arm ]
 
     runs-on: ubuntu-latest
     container:
@@ -61,4 +61,8 @@ jobs:
       run: (ls -l /app/*.sh && echo "Shell scripts found") || echo "No shell scripts found"
     - name: check environment variables
       run: echo $BASE64_WORKFLOW_STEP_INPUT_VARIABLES | base64 -d | jq .
+    - name: check json content
+      run: tftest=$(echo $SG_BASE64_WORKFLOW_STEP_INPUT_VARIABLES | base64 --decode | jq -r '.providertf')
+           echo $tftest
+
       
