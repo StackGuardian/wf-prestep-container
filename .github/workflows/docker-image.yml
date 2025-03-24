@@ -62,9 +62,8 @@ jobs:
     - name: check environment variables
       run: echo $BASE64_WORKFLOW_STEP_INPUT_VARIABLES | base64 -d | jq .
     - name: check json content
-      run: |
-        tftest=$(echo $SG_BASE64_WORKFLOW_STEP_INPUT_VARIABLES | base64 --decode | jq -r '.providertf')
-        echo $tftest
+      run: tftest=$(echo $SG_BASE64_WORKFLOW_STEP_INPUT_VARIABLES | base64 --decode | jq -r '.providertf') && echo $tftest
+
   test_arm_image:
     needs: [ build_arm ]
 
@@ -79,7 +78,4 @@ jobs:
     - name: check environment variables
       run: echo $BASE64_WORKFLOW_STEP_INPUT_VARIABLES | base64 -d | jq .
     - name: check json content
-      run: |
-        tftest=$(echo $SG_BASE64_WORKFLOW_STEP_INPUT_VARIABLES | base64 --decode | jq -r '.providertf')
-        echo $tftest
- 
+      run: tftest=$(echo $SG_BASE64_WORKFLOW_STEP_INPUT_VARIABLES | base64 --decode | jq -r '.providertf') && echo $tftest
