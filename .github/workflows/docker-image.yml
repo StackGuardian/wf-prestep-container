@@ -59,4 +59,6 @@ jobs:
     steps:
     - name: check shell scripts
       run: (ls -l /app/*.sh && echo "Shell scripts found") || echo "No shell scripts found"
+    - name: check environment variables
+      run: echo $BASE64_WORKFLOW_STEP_INPUT_VARIABLES | base64 -d | jq .
       
