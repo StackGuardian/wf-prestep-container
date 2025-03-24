@@ -5,13 +5,21 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-
+  workflow_dispatch:
+    inputs:
+      dockerfile:
+        description: 'Path to the Dockerfile'
+        required: true
+        default: 'Dockerfile'
+      image_tag:
+        description: 'Tag for the Docker image'
+        required: true
+        default: 'latest'
 jobs:
 
   build_x86:
 
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout the repository
       uses: actions/checkout@v4
@@ -29,7 +37,6 @@ jobs:
   build_arm:
 
     runs-on: ubuntu-22.04-arm
-
     steps:
     - uses: actions/checkout@v4
     - name: Build the Docker image
@@ -40,3 +47,15 @@ jobs:
       
     - name: Push the Docker image
       run: docker push mmalzahn/testbuildimage:${{ github.ref_name }}-arm
+
+  test_image:
+    needs: [ build_x86 ]
+
+    runs-on: ubuntu-latest
+    container:
+      image: mmalzahn/testbuildimage:${{ github.ref_name }}-x86
+      env:
+        BASE64_WORKFLOW_STEP_INPUT_VARIABLES: eyJwcm92aWRlcnRmIjogIkhhbnMgMTIzNCIsICJmaWxlY29udGVudCI6ICJwcm92aWRlciBcImF6dXJlcm1cIiB7XG4gIHJlc291cmNlX3Byb3ZpZGVyX3JlZ2lzdHJhdGlvbnMgPSBcIm5vbmVcIiBcbiAgZmVhdHVyZXMge31cbn1cbiIsICJmaWxlbmFtZSI6ICJwcm92aWRlci50ZiJ9  
+    steps:
+    - name: check shell scripts
+      run: (ls -l /scripts/*.sh && echo "Shell scripts found") || echo "No shell scripts found"
