@@ -58,5 +58,5 @@ jobs:
         BASE64_WORKFLOW_STEP_INPUT_VARIABLES: eyJwcm92aWRlcnRmIjogIkhhbnMgMTIzNCIsICJmaWxlY29udGVudCI6ICJwcm92aWRlciBcImF6dXJlcm1cIiB7XG4gIHJlc291cmNlX3Byb3ZpZGVyX3JlZ2lzdHJhdGlvbnMgPSBcIm5vbmVcIiBcbiAgZmVhdHVyZXMge31cbn1cbiIsICJmaWxlbmFtZSI6ICJwcm92aWRlci50ZiJ9  
     steps:
     - name: check shell scripts
-      run: (ls -l *.sh && echo "Shell scripts found") || echo "No shell scripts found"
+      run: (ls -l /app/*.sh && echo "Shell scripts found") || echo "No shell scripts found"
       
