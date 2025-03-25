@@ -1,18 +1,21 @@
 #!/bin/bash
 
-resource_group_name=$(echo $SG_BASE64_WORKFLOW_STEP_INPUT_VARIABLES | base64 --decode | jq -r '.resource_group_name')
-storage_account_name=$(echo $SG_BASE64_WORKFLOW_STEP_INPUT_VARIABLES | base64 --decode | jq -r '.storage_account_name')
-container_name=$(echo $SG_BASE64_WORKFLOW_STEP_INPUT_VARIABLES | base64 --decode | jq -r '.container_name')
-statefilename=$(echo $SG_BASE64_WORKFLOW_STEP_INPUT_VARIABLES | base64 --decode | jq -r '.statefilename')
+# Write the backend configuration to backend.tf
+
+bucket=$(echo $SG_BASE64_WORKFLOW_STEP_INPUT_VARIABLES | base64 --decode | jq -r '.bucket')
+key=$(echo $SG_BASE64_WORKFLOW_STEP_INPUT_VARIABLES | base64 --decode | jq -r '.key')
+region=$(echo $SG_BASE64_WORKFLOW_STEP_INPUT_VARIABLES | base64 --decode | jq -r '.region')
+dynamodb_table=$(echo $SG_BASE64_WORKFLOW_STEP_INPUT_VARIABLES | base64 --decode | jq -r '.dynamodb_table')
 filepath_backend=${MOUNTED_IAC_SOURCE_CODE_DIR}"/backend.tf"
 
 read -r -d '' backendcontent << EOF
 terraform {
-  backend "azurerm" {
-    resource_group_name  = "$resource_group_name"
-    storage_account_name = "$storage_account_name"
-    container_name       = "$container_name"
-    key                  = "$statefilename"
+  backend "s3" {
+    bucket         = "$bucket"
+    key            = "$key"
+    region         = "$region"
+    encrypt        = true
+    dynamodb_table = "$dynamodb_table"
   }
 }
 EOF
