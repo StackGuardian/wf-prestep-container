@@ -9,7 +9,6 @@ on:
 jobs:
 
   build_x86:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -18,16 +17,14 @@ jobs:
 
     - name: docker hub login
       run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u mmalzahn --password-stdin
-      
+
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag mmalzahn/testbuildimage:${{ github.ref_name }}-x86
 
     - name: Push the Docker image
       run: docker push mmalzahn/testbuildimage:${{ github.ref_name }}-x86
 
-
   build_arm:
-
     runs-on: ubuntu-22.04-arm
 
     steps:
@@ -37,7 +34,7 @@ jobs:
 
     - name: docker hub login
       run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u mmalzahn --password-stdin
-      
+
     - name: Push the Docker image
       run: docker push mmalzahn/testbuildimage:${{ github.ref_name }}-arm
 
@@ -48,7 +45,7 @@ jobs:
     container:
       image: mmalzahn/testbuildimage:${{ github.ref_name }}-x86
       env:
-        SG_BASE64_WORKFLOW_STEP_INPUT_VARIABLES: eyJwcm92aWRlcnRmIjogIkhhbnMgMTIzNCIsICJmaWxlY29udGVudCI6ICJwcm92aWRlciBcImF6dXJlcm1cIiB7XG4gIHJlc291cmNlX3Byb3ZpZGVyX3JlZ2lzdHJhdGlvbnMgPSBcIm5vbmVcIiBcbiAgZmVhdHVyZXMge31cbn1cbiIsICJmaWxlbmFtZSI6ICJwcm92aWRlci50ZiJ9  
+        SG_BASE64_WORKFLOW_STEP_INPUT_VARIABLES: eyJwcm92aWRlcnRmIjogIkhhbnMgMTIzNCIsICJmaWxlY29udGVudCI6ICJwcm92aWRlciBcImF6dXJlcm1cIiB7XG4gIHJlc291cmNlX3Byb3ZpZGVyX3JlZ2lzdHJhdGlvbnMgPSBcIm5vbmVcIiBcbiAgZmVhdHVyZXMge31cbn1cbiIsICJmaWxlbmFtZSI6ICJwcm92aWRlci50ZiJ9
 
     steps:
     - name: check shell scripts
@@ -67,7 +64,7 @@ jobs:
     container:
       image: mmalzahn/testbuildimage:${{ github.ref_name }}-arm
       env:
-        SG_BASE64_WORKFLOW_STEP_INPUT_VARIABLES: eyJwcm92aWRlcnRmIjogIkhhbnMgMTIzNCIsICJmaWxlY29udGVudCI6ICJwcm92aWRlciBcImF6dXJlcm1cIiB7XG4gIHJlc291cmNlX3Byb3ZpZGVyX3JlZ2lzdHJhdGlvbnMgPSBcIm5vbmVcIiBcbiAgZmVhdHVyZXMge31cbn1cbiIsICJmaWxlbmFtZSI6ICJwcm92aWRlci50ZiJ9  
+        SG_BASE64_WORKFLOW_STEP_INPUT_VARIABLES: eyJwcm92aWRlcnRmIjogIkhhbnMgMTIzNCIsICJmaWxlY29udGVudCI6ICJwcm92aWRlciBcImF6dXJlcm1cIiB7XG4gIHJlc291cmNlX3Byb3ZpZGVyX3JlZ2lzdHJhdGlvbnMgPSBcIm5vbmVcIiBcbiAgZmVhdHVyZXMge31cbn1cbiIsICJmaWxlbmFtZSI6ICJwcm92aWRlci50ZiJ9
 
     steps:
     - name: check shell scripts
