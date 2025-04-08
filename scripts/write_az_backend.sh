@@ -21,7 +21,7 @@ filepath_backend=${MOUNTED_IAC_SOURCE_CODE_DIR}"/backend.tf"
 read -r -d '' backendcontent << EOF
 terraform {
   backend "azurerm" {
-    use_azuread_auth = true
+    use_azuread_auth     = true
     resource_group_name  = "$resource_group_name"
     storage_account_name = "$storage_account_name"
     container_name       = "$container_name"
