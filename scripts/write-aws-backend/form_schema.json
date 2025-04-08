@@ -1,0 +1,29 @@
+{
+    "title": "Terraform Backend Configparameter",
+    "description": "set of the Backend Parameters for private backends",
+    "type": "object",
+    "required": [
+        "bucket_name",
+        "key",
+        "region",
+        "dynamodb_table"
+    ],
+    "properties": {
+        "bucket_name": {
+            "type": "string",
+            "title": "Bucket Name"
+        },
+        "key": {
+            "type": "string",
+            "title": "Name of the Statefile"
+        },
+        "region": {
+            "type": "string",
+            "title": "Region"
+        },
+        "dynamodb_table": {
+            "type": "string",
+            "title": "DynamoDB Table Name"
+        }
+    }
+}

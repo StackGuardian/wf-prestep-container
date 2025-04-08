@@ -1,0 +1,15 @@
+{
+    "bucket_name": {
+        "ui:help": "Name of the S3 Bucket to store the Statefile in"
+    },
+    "key": {
+        "ui:placeholder": "terraform.tfstate",
+        "ui:help": "Name of the Statefile"
+    },
+    "region": {
+        "ui:help": "Region of the S3 Bucket"
+    },
+    "dynamodb_table": {
+        "ui:help": "Name of the dynamodb table to use for state locking"
+    }
+}
