@@ -1,0 +1,15 @@
+{
+    "resource_group_name": {
+        "ui:help": "Name of the Resource Group for the Storage Account"
+    },
+    "storage_account_name": {
+        "ui:help": "Name of the Storage Account to store the Statefile in"
+    },
+    "container_name": {
+        "ui:help": "Name of the container inside the Storage Account"
+    },
+    "statefilename": {
+        "ui:placeholder": "terraform.tfstate",
+        "ui:help": "Name of the Statefile inside the container"
+    }
+}

@@ -1,0 +1,29 @@
+{
+    "title": "Terraform Backend Configparameter",
+    "description": "set of the Backend Parameters for private backends",
+    "type": "object",
+    "required": [
+        "resource_group_name",
+        "storage_account_name",
+        "container_name",
+        "statefilename"
+    ],
+    "properties": {
+        "resource_group_name": {
+            "type": "string",
+            "title": "Resource Group Name"
+        },
+        "storage_account_name": {
+            "type": "string",
+            "title": "Storage Account name"
+        },
+        "container_name": {
+            "type": "string",
+            "title": "Name of the container"
+        },
+        "statefilename": {
+            "type": "string",
+            "title": "Name of the Statefile"
+        }
+    }
+}
