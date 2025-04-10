@@ -10,6 +10,6 @@ RUN apt-get update && \
 
 WORKDIR /app
 
-COPY scripts/*.sh /app/
-RUN chmod +x /app/*.sh
-CMD [ "/app/sleep.sh" ]
+COPY scripts/write-az-provider.sh /app/write-az-provider.sh
+RUN chmod +x /app/write-az-provider.sh
+CMD [ "/app/write-az-provider.sh" ]
