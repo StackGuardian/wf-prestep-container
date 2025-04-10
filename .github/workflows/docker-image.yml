@@ -32,7 +32,13 @@ jobs:
       run: docker build . --file Dockerfile_azbackend --tag mmalzahn/wfsteps:azbackend
 
     - name: Push the Docker image
-      run: docker push mmalzahn/wfs-master:latest
+      run: docker push mmalzahn/wfsteps:latest
+
+    - name: Push the Docker image
+      run: docker push mmalzahn/wfsteps:azprovider
+
+    - name: Push the Docker image
+      run: docker push mmalzahn/wfsteps:azbackend
 
 #   build_variants:
 #     runs-on: ubuntu-latest
