@@ -25,20 +25,26 @@ jobs:
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag mmalzahn/wfsteps:latest
 
+    - name: Push the Docker image
+      run: docker push mmalzahn/wfsteps:latest
+
     - name: Build the Docker image AZ provider
       run: docker build . --file Dockerfile_azprovider --tag mmalzahn/wfsteps:azprovider
+
+    - name: Push the Docker image
+      run: docker push mmalzahn/wfsteps:azprovider
 
     - name: Build the Docker image AZ Backend
       run: docker build . --file Dockerfile_azbackend --tag mmalzahn/wfsteps:azbackend
 
     - name: Push the Docker image
-      run: docker push mmalzahn/wfsteps:latest
-
-    - name: Push the Docker image
-      run: docker push mmalzahn/wfsteps:azprovider
-
-    - name: Push the Docker image
       run: docker push mmalzahn/wfsteps:azbackend
+
+    - name: Build the Docker image Write RAW file
+      run: docker build . --file Dockerfile_rawfile --tag mmalzahn/wfsteps:rawfile
+
+    - name: Push the Docker image
+      run: docker push mmalzahn/wfsteps:rawfile
 
 #   build_variants:
 #     runs-on: ubuntu-latest
