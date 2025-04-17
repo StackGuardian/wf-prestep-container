@@ -35,92 +35,13 @@ jobs:
       run: docker push mmalzahn/wfsteps:azprovider
 
     - name: Build the Docker image AZ Backend
-      run: docker build . --file Dockerfile_azbackend --tag mmalzahn/wfsteps:azbackend
+      run: docker build . --file Dockerfile_azbackend --tag mmalzahn/wfsteps:azbackend-v2
 
     - name: Push the Docker image
-      run: docker push mmalzahn/wfsteps:azbackend
+      run: docker push mmalzahn/wfsteps:azbackend-v2
 
     - name: Build the Docker image Write RAW file
       run: docker build . --file Dockerfile_rawfile --tag mmalzahn/wfsteps:rawfile
 
     - name: Push the Docker image
       run: docker push mmalzahn/wfsteps:rawfile
-
-#   build_variants:
-#     runs-on: ubuntu-latest
-#     strategy:
-#       matrix:
-#         tools: [
-#           'write_aws_backend',
-#           'write_az_backend'
-#                ]
-#     needs: [ build_x86 ]
-#     steps:
-#     - name: Checkout the repository
-#       uses: actions/checkout@v4
-
-#     - name: Login to Docker Hub
-#       uses: docker/login-action@v3
-#       with:
-#         username: ${{ vars.DOCKERHUB_USERNAME }}
-#         password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-#     - name: Build the Docker image
-#       run: docker build . --file Dockerfile --build-arg tool=${{ matrix.tools }} --tag mmalzahn/wfs-${{ matrix.tools }}:latest
-
-#     - name: Push the Docker image
-#       run: docker push mmalzahn/wfs-${{ matrix.tools }}:latest
-
-
-# Uncomment the following section to enable ARM build and test jobs
-#   build_arm:
-#     runs-on: ubuntu-22.04-arm
-
-#     steps:
-#     - uses: actions/checkout@v4
-#     - name: Build the Docker image
-#       run: docker build . --file Dockerfile --tag mmalzahn/wfs-master:${{ github.ref_name }}-arm
-
-#     - name: docker hub login
-#       run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u mmalzahn --password-stdin
-
-#     - name: Push the Docker image
-#       run: docker push mmalzahn/wfs-master:${{ github.ref_name }}-arm
-
-#   test_x86_image:
-#     needs: [ build_x86 ]
-
-#     runs-on: ubuntu-latest
-#     container:
-#       image: mmalzahn/testbuildimage:${{ github.ref_name }}-x86
-#       env:
-#         SG_BASE64_WORKFLOW_STEP_INPUT_VARIABLES: eyJwcm92aWRlcnRmIjogIkhhbnMgMTIzNCIsICJmaWxlY29udGVudCI6ICJwcm92aWRlciBcImF6dXJlcm1cIiB7XG4gIHJlc291cmNlX3Byb3ZpZGVyX3JlZ2lzdHJhdGlvbnMgPSBcIm5vbmVcIiBcbiAgZmVhdHVyZXMge31cbn1cbiIsICJmaWxlbmFtZSI6ICJwcm92aWRlci50ZiJ9
-
-#     steps:
-#     - name: check shell scripts
-#       run: (ls -l /app/*.sh && echo "Shell scripts found") || echo "No shell scripts found"
-
-#     - name: check environment variables
-#       run: echo $SG_BASE64_WORKFLOW_STEP_INPUT_VARIABLES | base64 -d | jq .
-
-#     - name: check json content
-#       run: tftest=$(echo $SG_BASE64_WORKFLOW_STEP_INPUT_VARIABLES | base64 --decode | jq -r '.providertf') && echo $tftest
-
-#   test_arm_image:
-#     needs: [ build_arm ]
-
-#     runs-on: ubuntu-22.04-arm
-#     container:
-#       image: mmalzahn/testbuildimage:${{ github.ref_name }}-arm
-#       env:
-#         SG_BASE64_WORKFLOW_STEP_INPUT_VARIABLES: eyJwcm92aWRlcnRmIjogIkhhbnMgMTIzNCIsICJmaWxlY29udGVudCI6ICJwcm92aWRlciBcImF6dXJlcm1cIiB7XG4gIHJlc291cmNlX3Byb3ZpZGVyX3JlZ2lzdHJhdGlvbnMgPSBcIm5vbmVcIiBcbiAgZmVhdHVyZXMge31cbn1cbiIsICJmaWxlbmFtZSI6ICJwcm92aWRlci50ZiJ9
-
-#     steps:
-#     - name: check shell scripts
-#       run: (ls -l /app/*.sh && echo "Shell scripts found") || echo "No shell scripts found"
-
-#     - name: check environment variables
-#       run: echo $SG_BASE64_WORKFLOW_STEP_INPUT_VARIABLES | base64 -d | jq .
-
-#     - name: check json content
-#       run: tftest=$(echo $SG_BASE64_WORKFLOW_STEP_INPUT_VARIABLES | base64 --decode | jq -r '.providertf') && echo $tftest
