@@ -34,10 +34,13 @@ else
 fi
 
 # Check if the statefilename is set in the environment variable or in the input variables
+
 if [ -v BACKEND_STATE_FILENAME ]; then
   statefilename=$BACKEND_STATE_FILENAME
-else
+elif ["$(echo $SG_BASE64_WORKFLOW_STEP_INPUT_VARIABLES | base64 --decode | jq -r '.use_default_statefile')"=="false"]; then
   statefilename=$(echo $SG_BASE64_WORKFLOW_STEP_INPUT_VARIABLES | base64 --decode | jq -r '.statefilename')
+else
+  statefilename=${SG_WORKFLOW_ID}"/terraform.tfstate"
 fi
 
 filepath_backend=${MOUNTED_IAC_SOURCE_CODE_DIR}"/backend.tf"
