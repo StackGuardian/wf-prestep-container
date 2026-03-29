@@ -13,8 +13,8 @@
 # Write the backend configuration to backend.tf
 
 echo "Migrating existing state from Azure Storage Account backend to local state file..."
-echo "current files in ${MOUNTED_IAC_SOURCE_CODE_DIR}:"
-ls -la ${MOUNTED_IAC_SOURCE_CODE_DIR}
+echo "current files in ${SG_MOUNTED_ARTIFACTS_DIR}:"
+ls -la ${SG_MOUNTED_ARTIFACTS_DIR}
 
 echo "***************************************************************"
 
@@ -44,14 +44,34 @@ fi
 
 if [ -v BACKEND_STATE_FILENAME ]; then
   statefilename=$BACKEND_STATE_FILENAME
-elif ["$(echo $SG_BASE64_WORKFLOW_STEP_INPUT_VARIABLES | base64 --decode | jq -r '.use_default_statefile')"=="false"]; then
+elif [ "$(echo $SG_BASE64_WORKFLOW_STEP_INPUT_VARIABLES | base64 --decode | jq -r '.use_default_statefile')" == "false" ]; then
   statefilename=$(echo $SG_BASE64_WORKFLOW_STEP_INPUT_VARIABLES | base64 --decode | jq -r '.statefilename')
 else
   statefilename=${SG_WORKFLOW_ID}
 fi
 
+
+filepath_backend=${MOUNTED_IAC_SOURCE_CODE_DIR}"/backend.tf"
+
+read -r -d '' backendcontent << EOF
+terraform {
+  backend "azurerm" {
+    use_azuread_auth     = true
+    resource_group_name  = "$resource_group_name"
+    storage_account_name = "$storage_account_name"
+    container_name       = "$container_name"
+    key                  = "$statefilename"
+  }
+}
+EOF
+
+printf "%b" "$backendcontent" > "$filepath_backend" 2>/dev/null;
+
+cat $filepath_backend
+
+
 # Download the terraform state file from the backend storage account
-filepath_statefile=${MOUNTED_IAC_SOURCE_CODE_DIR}"/terraform.tfstate"
+filepath_statefile=${SG_MOUNTED_ARTIFACTS_DIR}"/tfstate.json"
 
 echo "Downloading state file '${statefilename}' from storage account '${storage_account_name}' container '${container_name}'..."
 
@@ -66,8 +86,8 @@ az storage blob download \
   --file "$filepath_statefile" \
   --auth-mode login
 
-echo "AFTER: current files in ${MOUNTED_IAC_SOURCE_CODE_DIR}:"
-ls -la ${MOUNTED_IAC_SOURCE_CODE_DIR}
+echo "AFTER: current files in ${SG_MOUNTED_ARTIFACTS_DIR}:"
+ls -la ${SG_MOUNTED_ARTIFACTS_DIR}
 
 echo "***************************************************************"
 

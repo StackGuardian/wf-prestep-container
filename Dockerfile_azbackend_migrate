@@ -1,15 +1,17 @@
 # Basis-Image
-FROM debian:12-slim as base
+FROM debian:12-slim AS base
 
 # Aktualisierung der Paketliste und Installation von notwendigen Tools
 RUN apt-get update && \
     apt-get upgrade -y && \
-    apt-get install -y bash jq && \
+    apt-get install -y bash jq curl gnupg lsb-release && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+
 WORKDIR /app
 
-COPY scripts/write-az-backend.sh /app/migrate-az-backend.sh
+COPY scripts/migrate-az-backend.sh /app/migrate-az-backend.sh
 RUN chmod +x /app/migrate-az-backend.sh
 CMD [ "/app/migrate-az-backend.sh" ]
