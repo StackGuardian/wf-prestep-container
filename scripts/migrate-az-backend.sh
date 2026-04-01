@@ -10,15 +10,6 @@
 # statefilename -> Name of the state file, including the "path"
 ################################################################################
 
-# Write the backend configuration to backend.tf
-
-echo "Migrating existing state from Azure Storage Account backend to local state file..."
-echo "current files in ${SG_MOUNTED_ARTIFACTS_DIR}:"
-ls -la ${SG_MOUNTED_ARTIFACTS_DIR}
-
-echo "***************************************************************"
-
-
 # Check if the resource group name is set in the environment variable or in the input variables
 if [ -v BACKEND_RESOURCE_GROUP_NAME ]; then
   resource_group_name=$BACKEND_RESOURCE_GROUP_NAME
@@ -50,26 +41,6 @@ else
   statefilename=${SG_WORKFLOW_ID}
 fi
 
-
-filepath_backend=${MOUNTED_IAC_SOURCE_CODE_DIR}"/backend.tf"
-
-read -r -d '' backendcontent << EOF
-terraform {
-  backend "azurerm" {
-    use_azuread_auth     = true
-    resource_group_name  = "$resource_group_name"
-    storage_account_name = "$storage_account_name"
-    container_name       = "$container_name"
-    key                  = "$statefilename"
-  }
-}
-EOF
-
-printf "%b" "$backendcontent" > "$filepath_backend" 2>/dev/null;
-
-cat $filepath_backend
-
-
 # Download the terraform state file from the backend storage account
 filepath_statefile=${SG_MOUNTED_ARTIFACTS_DIR}"/tfstate.json"
 
@@ -99,3 +70,41 @@ else
   echo "ERROR: Failed to download state file" >&2
   exit 1
 fi
+
+# Validate required environment variables
+if [ -z "$SG_Workflow_Rename_API_Token" ]; then
+  echo "ERROR: SG_Workflow_Rename_API_Token environment variable is not set" >&2
+  exit 1
+fi
+API_BASE_URL="https://api.app.stackguardian.io/api/v1"
+AUTH_HEADER="Authorization: apikey $SG_Workflow_Rename_API_Token"
+
+echo "Fetching workflow configuration for workflow: $WORKFLOW_ID in org: $SG_ORG_ID"
+
+# Fetch the workflow configuration
+WORKFLOW_CONFIG=$(curl -s -X GET \
+  -H "$AUTH_HEADER" \
+  -H "Content-Type: application/json" \
+  "$API_BASE_URL$SG_ORG_ID$WORKFLOW_ID")
+
+echo "Current workflow configuration:"
+echo "$WORKFLOW_CONFIG" | jq '.'
+
+# Verify the API response
+if echo "$WORKFLOW_CONFIG" | jq -e '.data' > /dev/null 2>&1; then
+  echo "Successfully fetched workflow configuration"
+else
+  echo "ERROR: Failed to fetch workflow configuration" >&2
+  echo "$WORKFLOW_CONFIG" | jq '.' >&2
+  exit 1
+fi
+
+UPDATED_CONFIG=$(echo "$WORKFLOW_CONFIG" | jq '
+  .data.config |= (
+    # Set backend to SG managed backend
+    .backend = "SG_MANAGED" |
+    # Remove pre-plan workflowstep
+    .workflowSteps |= map(select(.stepType != "pre-plan" and .name != "pre-plan"))
+  )
+')
+echo "UPDATED_CONFIG: $UPDATED_CONFIG"
