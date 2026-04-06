@@ -1,15 +1,5 @@
 #!/bin/bash
 
-################################################################################
-# Input paramters which must be set in the template
-#
-# resource_group_name -> Name of the Resource Group in which the Storage Account
-#                        is located
-# storage_account_name -> Name of the Storage Account
-# container_name -> Name of the container iun the Storage Account
-# statefilename -> Name of the state file, including the "path"
-################################################################################
-
 # Check if the resource group name is set in the environment variable or in the input variables
 if [ -v BACKEND_RESOURCE_GROUP_NAME ]; then
   resource_group_name=$BACKEND_RESOURCE_GROUP_NAME
@@ -57,12 +47,7 @@ az storage blob download \
   --file "$filepath_statefile" \
   --auth-mode login
 
-echo "AFTER: current files in ${SG_MOUNTED_ARTIFACTS_DIR}:"
-ls -la ${SG_MOUNTED_ARTIFACTS_DIR}
-
 echo "***************************************************************"
-
-
 
 if [ $? -eq 0 ]; then
   echo "State file downloaded successfully to ${filepath_statefile}"
@@ -87,36 +72,17 @@ WORKFLOW_CONFIG=$(curl -s -X GET \
   -H "Content-Type: application/json" \
   "$API_BASE_URL$SG_ORG_ID$WORKFLOW_ID")
 
-echo "Current workflow configuration:"
-echo "$WORKFLOW_CONFIG" | jq '.'
-
-# Verify the API response
-if echo "$WORKFLOW_CONFIG" | jq -e '.data' > /dev/null 2>&1; then
-  echo "Successfully fetched workflow configuration"
-else
-  echo "ERROR: Failed to fetch workflow configuration" >&2
-  echo "$WORKFLOW_CONFIG" | jq '.' >&2
-  exit 1
-fi
-
-UPDATED_CONFIG=$(echo "$WORKFLOW_CONFIG" | jq '
-  .data.config |= (
-    # Set backend to SG managed backend
-    .backend = "SG_MANAGED" |
-    # Remove pre-plan workflowstep
-    .workflowSteps |= map(select(.stepType != "pre-plan" and .name != "pre-plan"))
+# Build a patch payload containing only the changed TerraformConfig
+PATCH_PAYLOAD=$(echo "$WORKFLOW_CONFIG" | jq '{
+  TerraformConfig: (
+    .msg.TerraformConfig |
+    .managedTerraformState = true |
+    .prePlanWfStepsConfig |= map(select(.wfStepTemplateId | startswith("/stackguardian/PreStep-create-az-backend") | not))
   )
-')
-echo "UPDATED_CONFIG: $UPDATED_CONFIG"
+}')
 
-echo ""
-echo "Updated workflow configuration:"
-echo "$UPDATED_CONFIG" | jq '.data.config'
-
-echo ""
-echo "----------------------------------------------------"
-echo ""
-echo $UPDATED_CONFIG | jq '.'
+echo "Patch payload:"
+echo "$PATCH_PAYLOAD" | jq '.'
 
 # Push the updated configuration back to the API
 echo ""
@@ -125,19 +91,8 @@ echo "Pushing updated configuration back to the API..."
 UPDATE_RESPONSE=$(curl -s -X PATCH \
   -H "$AUTH_HEADER" \
   -H "Content-Type: application/json" \
-  -d "$UPDATED_CONFIG" \
+  -d "$PATCH_PAYLOAD" \
   "$API_BASE_URL$SG_ORG_ID$WORKFLOW_ID")
 
 echo "API Response:"
 echo "$UPDATE_RESPONSE" | jq '.'
-
-# Verify the update was successful
-if echo "$UPDATE_RESPONSE" | jq -e '.data' > /dev/null 2>&1; then
-  echo ""
-  echo "✓ Successfully updated workflow configuration!"
-  echo "  - Backend changed to SG_MANAGED"
-  echo "  - Pre-plan workflowstep removed"
-else
-  echo "ERROR: Failed to update workflow configuration" >&2
-  exit 1
-fi
