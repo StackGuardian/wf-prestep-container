@@ -108,3 +108,36 @@ UPDATED_CONFIG=$(echo "$WORKFLOW_CONFIG" | jq '
   )
 ')
 echo "UPDATED_CONFIG: $UPDATED_CONFIG"
+
+echo ""
+echo "Updated workflow configuration:"
+echo "$UPDATED_CONFIG" | jq '.data.config'
+
+echo ""
+echo "----------------------------------------------------"
+echo ""
+echo $UPDATED_CONFIG | jq '.'
+
+# Push the updated configuration back to the API
+echo ""
+echo "Pushing updated configuration back to the API..."
+
+UPDATE_RESPONSE=$(curl -s -X PATCH \
+  -H "$AUTH_HEADER" \
+  -H "Content-Type: application/json" \
+  -d "$UPDATED_CONFIG" \
+  "$API_BASE_URL$SG_ORG_ID$WORKFLOW_ID")
+
+echo "API Response:"
+echo "$UPDATE_RESPONSE" | jq '.'
+
+# Verify the update was successful
+if echo "$UPDATE_RESPONSE" | jq -e '.data' > /dev/null 2>&1; then
+  echo ""
+  echo "✓ Successfully updated workflow configuration!"
+  echo "  - Backend changed to SG_MANAGED"
+  echo "  - Pre-plan workflowstep removed"
+else
+  echo "ERROR: Failed to update workflow configuration" >&2
+  exit 1
+fi
